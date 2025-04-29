@@ -47,7 +47,7 @@ class MachineLearningModel(ABC):
         """
         pass
 
-def _polynomial_features(self, X):
+def _polynomial_features(self, X, degree):
     """
         Generate polynomial features from the input features.
         Check the slides for hints on how to implement this one. 
@@ -59,7 +59,30 @@ def _polynomial_features(self, X):
         Returns:
         X_poly (array-like): Polynomial features.
     """
+    X = np.asarray(X)
+    n_samples, n_features = X.shape
+    X_poly = np.ones((n_samples, 1))  # Bias term
+
+    for d in range(1, degree + 1):
+        for i in range(n_features):
+            X_poly = np.hstack((X_poly, (X[:, [i]] ** d)))
+
+    return X_poly
     
+
+def map_feature_interactions(X1, X2, degree):
+    """
+    Nonlinear polynomial feature expansion for two features (with interactions).
+    """
+    m = X1.shape[0]
+    out = np.ones((m, 1))
+
+    for i in range(1, degree + 1):
+        for j in range(i + 1):
+            term = (X1 ** (i - j)) * (X2 ** j)
+            out = np.hstack((out, term.reshape(-1, 1)))
+
+    return out
 
 class RegressionModelNormalEquation(MachineLearningModel):
     """
@@ -77,28 +100,6 @@ class RegressionModelNormalEquation(MachineLearningModel):
         self.degree = degree
         self.theta = None
 
-    def _polynomial_features(self, X):
-        """
-        Generate polynomial features from the input features.
-        Check the slides for hints on how to implement this one. 
-        This method is used by the regression models and must work
-        for any degree polynomial
-        Parameters:
-        X (array-like): Features of the data.
-
-        Returns:
-        X_poly (array-like): Polynomial features.
-        """
-        X = np.asarray(X)
-        n_samples, n_features = X.shape
-        X_poly = np.ones((n_samples, 1))  # bias term
-
-        for d in range(1, self.degree + 1):
-            for i in range(n_features):
-                X_poly = np.hstack((X_poly, X[:, [i]] ** d))
-
-        return X_poly
-    
     def fit(self, X, y):
         """
         Train the model using the given training data.
@@ -110,7 +111,7 @@ class RegressionModelNormalEquation(MachineLearningModel):
         Returns:
         None
         """
-        X_poly = self._polynomial_features(X)
+        X_poly = _polynomial_features(X, self.degree)
         y = np.asarray(y).reshape(-1, 1)  # Ensure y is a column vector
         # Normal Equation: theta = (X^T * X)^(-1) * X^T * y
         self.theta = np.linalg.inv(X_poly.T.dot(X_poly)).dot(X_poly.T).dot(y)
@@ -168,27 +169,6 @@ class RegressionModelGradientDescent(MachineLearningModel):
         self.theta = None
         self.cost_history = []
 
-    def _polynomial_features(self, X):
-        """
-        Generate polynomial features from the input features.
-        Check the slides for hints on how to implement this one. 
-        This method is used by the regression models and must work
-        for any degree polynomial
-        Parameters:
-        X (array-like): Features of the data.
-
-        Returns:
-        X_poly (array-like): Polynomial features.
-        """
-        X = np.asarray(X)
-        n_samples, n_features = X.shape
-        X_poly = np.ones((n_samples, 1))
-        for d in range(1, self.degree + 1):
-            for i in range(n_features):
-                X_poly = np.hstack((X_poly, X[:, [i]] ** d))
-        return X_poly
-
-
     def fit(self, X, y):
         """
         Train the model using the given training data.
@@ -201,7 +181,7 @@ class RegressionModelGradientDescent(MachineLearningModel):
         None
         """
         #--- Write your code here ---#
-        X_poly = self._polynomial_features(X)
+        X_poly = _polynomial_features(X, self.degree)
         y = np.asarray(y).reshape(-1, 1)
         n_samples, n_features = X_poly.shape
 
@@ -361,7 +341,6 @@ class LogisticRegression(MachineLearningModel):
         epsilon = 1e-15
         cost = -(1/m) * (y.T @ np.log(h + epsilon) + (1 - y).T @ np.log(1 - h + epsilon))
         return cost.item() 
-import numpy as np
 
 class NonLinearLogisticRegression(MachineLearningModel):
     """
@@ -385,20 +364,6 @@ class NonLinearLogisticRegression(MachineLearningModel):
         """
         return 1 / (1 + np.exp(-z))
 
-    def mapFeature(self, X1, X2, D):
-        """
-        Map the two input features to polynomial features up to degree D.
-        """
-        m = X1.shape[0]
-        out = np.ones((m, 1))  # Start with bias term
-
-        for i in range(1, D + 1):
-            for j in range(i + 1):
-                term = (X1 ** (i - j)) * (X2 ** j)
-                out = np.hstack((out, term.reshape(-1, 1)))
-
-        return out
-
     def _cost_function(self, X, y):
         """
         Compute the logistic regression cost function.
@@ -420,7 +385,7 @@ class NonLinearLogisticRegression(MachineLearningModel):
             raise ValueError("Input must have exactly two features.")
 
         # Map features
-        X_mapped = self.mapFeature(X[:, 0], X[:, 1], self.degree)
+        X_mapped = map_feature_interactions(X[:,0], X[:,1], self.degree)
 
         m, n = X_mapped.shape
         self.theta = np.zeros((n, 1))
@@ -429,8 +394,6 @@ class NonLinearLogisticRegression(MachineLearningModel):
             h = self._sigmoid(X_mapped @ self.theta)
             gradient = (1/m) * X_mapped.T @ (h - y)
             self.theta -= self.learning_rate * gradient
-
-            # Track cost
             cost = self._cost_function(X_mapped, y)
             self.cost_history.append(cost)
 
