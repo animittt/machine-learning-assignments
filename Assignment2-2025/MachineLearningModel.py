@@ -205,7 +205,6 @@ class RegressionModelGradientDescent(MachineLearningModel):
         y = np.asarray(y).reshape(-1, 1)
         n_samples, n_features = X_poly.shape
 
-        # Initialize theta
         self.theta = np.zeros((n_features, 1))
 
         for _ in range(self.num_iterations):
@@ -246,7 +245,7 @@ class RegressionModelGradientDescent(MachineLearningModel):
         mse = np.mean((predictions - y) ** 2)
         return mse
 
-class LogisticRegression:
+class LogisticRegression(MachineLearningModel):
     """
     Logistic Regression model using gradient descent optimization.
     """
@@ -260,6 +259,10 @@ class LogisticRegression:
         num_iterations (int): The number of iterations for gradient descent.
         """
         #--- Write your code here ---#
+        self.learning_rate = learning_rate
+        self.num_iterations = num_iterations
+        self.theta = None
+        self.cost_history = []
 
     def fit(self, X, y):
         """
@@ -273,6 +276,25 @@ class LogisticRegression:
         None
         """
         #--- Write your code here ---#
+        X = np.asarray(X)
+        y = np.asarray(y).reshape(-1, 1)
+        m, n = X.shape
+
+        # Add bias term (intercept)
+        X_ext = np.hstack([np.ones((m, 1)), X])
+
+        # Initialize weights
+        self.theta = np.zeros((n + 1, 1))
+
+        # Gradient Descent
+        for _ in range(self.num_iterations):
+            h = self._sigmoid(X_ext @ self.theta)
+            gradient = (1/m) * X_ext.T @ (h - y)
+            self.theta -= self.learning_rate * gradient
+
+            # Track cost
+            cost = self._cost_function(X_ext, y)
+            self.cost_history.append(cost)
 
     def predict(self, X):
         """
@@ -284,7 +306,12 @@ class LogisticRegression:
         Returns:
         predictions (array-like): Predicted probabilities.
         """
-        #--- Write your code here ---#
+        #--- Write your code here ---#  
+        X = np.asarray(X)
+        m = X.shape[0]
+        X_ext = np.hstack([np.ones((m, 1)), X])
+        predictions = self._sigmoid(X_ext @ self.theta)
+        return predictions
 
     def evaluate(self, X, y):
         """
@@ -298,6 +325,10 @@ class LogisticRegression:
         score (float): Evaluation score (e.g., accuracy).
         """
         #--- Write your code here ---#
+        probs = self.predict(X)
+        preds = (probs >= 0.5).astype(int)
+        accuracy = np.mean(preds.flatten() == y.flatten())
+        return accuracy
 
     def _sigmoid(self, z):
         """
@@ -310,6 +341,8 @@ class LogisticRegression:
         result (array-like): Output of the sigmoid function.
         """
         #--- Write your code here ---#
+        z = np.asarray(z)
+        return 1 / (1 + np.exp(-z))
 
     def _cost_function(self, X, y):
         """
@@ -323,97 +356,102 @@ class LogisticRegression:
         cost (float): The logistic regression cost.
         """
         #--- Write your code here ---#
-    
-class NonLinearLogisticRegression:
+        m = len(y)
+        h = self._sigmoid(X @ self.theta)
+        epsilon = 1e-15
+        cost = -(1/m) * (y.T @ np.log(h + epsilon) + (1 - y).T @ np.log(1 - h + epsilon))
+        return cost.item() 
+import numpy as np
+
+class NonLinearLogisticRegression(MachineLearningModel):
     """
     Nonlinear Logistic Regression model using gradient descent optimization.
-    It works for 2 features (when creating the variable interactions)
+    Works for two features with polynomial feature mapping.
     """
 
     def __init__(self, degree=2, learning_rate=0.01, num_iterations=1000):
         """
         Initialize the nonlinear logistic regression model.
-
-        Parameters:
-        degree (int): Degree of polynomial features.
-        learning_rate (float): The learning rate for gradient descent.
-        num_iterations (int): The number of iterations for gradient descent.
         """
-        #--- Write your code here ---#
-
-    def fit(self, X, y):
-        """
-        Train the nonlinear logistic regression model using gradient descent.
-
-        Parameters:
-        X (array-like): Features of the training data.
-        y (array-like): Target variable of the training data.
-
-        Returns:
-        None
-        """
-        #--- Write your code here ---#
-
-    def predict(self, X):
-        """
-        Make predictions using the trained nonlinear logistic regression model.
-
-        Parameters:
-        X (array-like): Features of the new data.
-
-        Returns:
-        predictions (array-like): Predicted probabilities.
-        """
-        #--- Write your code here ---#
-
-    def evaluate(self, X, y):
-        """
-        Evaluate the nonlinear logistic regression model on the given data.
-
-        Parameters:
-        X (array-like): Features of the data.
-        y (array-like): Target variable of the data.
-
-        Returns:
-        cost (float): The logistic regression cost.
-        """
-        #--- Write your code here ---#
+        self.degree = degree
+        self.learning_rate = learning_rate
+        self.num_iterations = num_iterations
+        self.theta = None
+        self.cost_history = []
 
     def _sigmoid(self, z):
         """
         Sigmoid function.
-
-        Parameters:
-        z (array-like): Input to the sigmoid function.
-
-        Returns:
-        result (array-like): Output of the sigmoid function.
         """
-        #--- Write your code here ---#
+        return 1 / (1 + np.exp(-z))
 
     def mapFeature(self, X1, X2, D):
         """
-        Map the features to a higher-dimensional space using polynomial features.
-        Check the slides to have hints on how to implement this function.
-        Parameters:
-        X1 (array-like): Feature 1.
-        X2 (array-like): Feature 2.
-        D (int): Degree of polynomial features.
-
-        Returns:
-        X_poly (array-like): Polynomial features.
+        Map the two input features to polynomial features up to degree D.
         """
-        #--- Write your code here ---#
+        m = X1.shape[0]
+        out = np.ones((m, 1))  # Start with bias term
+
+        for i in range(1, D + 1):
+            for j in range(i + 1):
+                term = (X1 ** (i - j)) * (X2 ** j)
+                out = np.hstack((out, term.reshape(-1, 1)))
+
+        return out
 
     def _cost_function(self, X, y):
         """
         Compute the logistic regression cost function.
-
-        Parameters:
-        X (array-like): Features of the data.
-        y (array-like): Target variable of the data.
-
-        Returns:
-        cost (float): The logistic regression cost.
         """
-        #--- Write your code here ---#
+        m = X.shape[0]
+        h = self._sigmoid(X @ self.theta)
+        epsilon = 1e-15  # to avoid log(0)
+        cost = -(1/m) * (y.T @ np.log(h + epsilon) + (1 - y).T @ np.log(1 - h + epsilon))
+        return cost.item()
+
+    def fit(self, X, y):
+        """
+        Train the nonlinear logistic regression model using gradient descent.
+        """
+        X = np.asarray(X)
+        y = np.asarray(y).reshape(-1, 1)
+
+        if X.shape[1] != 2:
+            raise ValueError("Input must have exactly two features.")
+
+        # Map features
+        X_mapped = self.mapFeature(X[:, 0], X[:, 1], self.degree)
+
+        m, n = X_mapped.shape
+        self.theta = np.zeros((n, 1))
+
+        for _ in range(self.num_iterations):
+            h = self._sigmoid(X_mapped @ self.theta)
+            gradient = (1/m) * X_mapped.T @ (h - y)
+            self.theta -= self.learning_rate * gradient
+
+            # Track cost
+            cost = self._cost_function(X_mapped, y)
+            self.cost_history.append(cost)
+
+    def predict(self, X):
+        """
+        Make predictions using the trained nonlinear logistic regression model.
+        """
+        X = np.asarray(X)
+
+        if X.shape[1] != 2:
+            raise ValueError("Input must have exactly two features.")
+
+        X_mapped = self.mapFeature(X[:, 0], X[:, 1], self.degree)
+        probs = self._sigmoid(X_mapped @ self.theta)
+        return probs
+
+    def evaluate(self, X, y):
+        """
+        Evaluate the model using accuracy.
+        """
+        probs = self.predict(X)
+        preds = (probs >= 0.5).astype(int)
+        accuracy = np.mean(preds.flatten() == y.flatten())
+        return accuracy
