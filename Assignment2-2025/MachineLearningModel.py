@@ -238,7 +238,6 @@ class LogisticRegression(MachineLearningModel):
         learning_rate (float): The learning rate for gradient descent.
         num_iterations (int): The number of iterations for gradient descent.
         """
-        #--- Write your code here ---#
         self.learning_rate = learning_rate
         self.num_iterations = num_iterations
         self.theta = None
@@ -255,24 +254,16 @@ class LogisticRegression(MachineLearningModel):
         Returns:
         None
         """
-        #--- Write your code here ---#
         X = np.asarray(X)
         y = np.asarray(y).reshape(-1, 1)
         m, n = X.shape
 
-        # Add bias term (intercept)
         X_ext = np.hstack([np.ones((m, 1)), X])
-
-        # Initialize weights
         self.theta = np.zeros((n + 1, 1))
-
-        # Gradient Descent
         for _ in range(self.num_iterations):
             h = self._sigmoid(X_ext @ self.theta)
             gradient = (1/m) * X_ext.T @ (h - y)
             self.theta -= self.learning_rate * gradient
-
-            # Track cost
             cost = self._cost_function(X_ext, y)
             self.cost_history.append(cost)
 
@@ -304,7 +295,6 @@ class LogisticRegression(MachineLearningModel):
         Returns:
         score (float): Evaluation score (e.g., accuracy).
         """
-        #--- Write your code here ---#
         probs = self.predict(X)
         preds = (probs >= 0.5).astype(int)
         accuracy = np.mean(preds.flatten() == y.flatten())
@@ -320,7 +310,6 @@ class LogisticRegression(MachineLearningModel):
         Returns:
         result (array-like): Output of the sigmoid function.
         """
-        #--- Write your code here ---#
         z = np.asarray(z)
         return 1 / (1 + np.exp(-z))
 
@@ -335,7 +324,6 @@ class LogisticRegression(MachineLearningModel):
         Returns:
         cost (float): The logistic regression cost.
         """
-        #--- Write your code here ---#
         m = len(y)
         h = self._sigmoid(X @ self.theta)
         epsilon = 1e-15
@@ -406,7 +394,7 @@ class NonLinearLogisticRegression(MachineLearningModel):
         if X.shape[1] != 2:
             raise ValueError("Input must have exactly two features.")
 
-        X_mapped = self.mapFeature(X[:, 0], X[:, 1], self.degree)
+        X_mapped = map_feature_interactions(X[:, 0], X[:, 1], self.degree)
         probs = self._sigmoid(X_mapped @ self.theta)
         return probs
 
