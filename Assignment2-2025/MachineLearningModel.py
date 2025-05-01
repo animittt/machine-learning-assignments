@@ -47,7 +47,7 @@ class MachineLearningModel(ABC):
         """
         pass
 
-def _polynomial_features(self, X, degree):
+def _polynomial_features(X, degree):
     """
         Generate polynomial features from the input features.
         Check the slides for hints on how to implement this one. 
@@ -127,7 +127,7 @@ class RegressionModelNormalEquation(MachineLearningModel):
         predictions (array-like): Predicted values.
         """
         #--- Write your code here ---#
-        X_poly = self._polynomial_features(X)
+        X_poly = _polynomial_features(X, self.degree)
         predictions = X_poly.dot(self.theta)
         return predictions
     
@@ -205,7 +205,7 @@ class RegressionModelGradientDescent(MachineLearningModel):
         predictions (array-like): Predicted values.
         """
         #--- Write your code here ---#
-        X_poly = self._polynomial_features(X)
+        X_poly = _polynomial_features(X, self.degree)
         return X_poly @ self.theta
 
     def evaluate(self, X, y):
