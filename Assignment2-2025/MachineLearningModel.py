@@ -204,7 +204,6 @@ class RegressionModelGradientDescent(MachineLearningModel):
         Returns:
         predictions (array-like): Predicted values.
         """
-        #--- Write your code here ---#
         X_poly = _polynomial_features(X, self.degree)
         return X_poly @ self.theta
 
@@ -219,7 +218,6 @@ class RegressionModelGradientDescent(MachineLearningModel):
         Returns:
         score (float): Evaluation score (MSE).
         """
-        #--- Write your code here ---#
         y = np.asarray(y).reshape(-1, 1)
         predictions = self.predict(X)
         mse = np.mean((predictions - y) ** 2)
@@ -277,7 +275,6 @@ class LogisticRegression(MachineLearningModel):
         Returns:
         predictions (array-like): Predicted probabilities.
         """
-        #--- Write your code here ---#  
         X = np.asarray(X)
         m = X.shape[0]
         X_ext = np.hstack([np.ones((m, 1)), X])

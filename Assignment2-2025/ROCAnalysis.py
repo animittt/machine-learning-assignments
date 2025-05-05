@@ -19,7 +19,6 @@ class ROCAnalysis:
             y_predicted (list): Predicted labels (0 or 1).
             y_true (list): True labels (0 or 1).
         """
-        #--- Write your code here ---#
         self.y_pred = y_predicted
         self.y_true = y_true
         self.tp = sum((yp == 1 and yt == 1) for yp, yt in zip(self.y_pred, self.y_true))

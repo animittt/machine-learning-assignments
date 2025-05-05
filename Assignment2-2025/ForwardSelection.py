@@ -96,7 +96,7 @@ class ForwardSelection:
                 remaining_features.remove(best_feature)
                 self.best_cost = best_score
             else:
-                break  # No improvement
+                break
 
     def fit(self):
         """
