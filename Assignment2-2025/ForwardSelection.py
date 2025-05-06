@@ -44,9 +44,7 @@ class ForwardSelection:
             y_train (array-like): Target labels for training.
             y_test (array-like): Target labels for testing.
         """
-        np.random.seed(seed)
         indices = np.arange(X.shape[0])
-        np.random.shuffle(indices)
         split_idx = int(len(indices) * split_ratio)
         train_idx = indices[:split_idx]
         test_idx = indices[split_idx:]
