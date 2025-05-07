@@ -61,7 +61,7 @@ def _polynomial_features(X, degree):
     """
     X = np.asarray(X)
     n_samples, n_features = X.shape
-    X_poly = np.ones((n_samples, 1))  # Bias term
+    X_poly = np.ones((n_samples, 1))
 
     for d in range(1, degree + 1):
         for i in range(n_features):
@@ -96,7 +96,6 @@ class RegressionModelNormalEquation(MachineLearningModel):
         Parameters:
         degree (int): Degree of the polynomial features.
         """
-        #--- Write your code here ---#
         self.degree = degree
         self.theta = None
 
@@ -112,7 +111,7 @@ class RegressionModelNormalEquation(MachineLearningModel):
         None
         """
         X_poly = _polynomial_features(X, self.degree)
-        y = np.asarray(y).reshape(-1, 1)  # Ensure y is a column vector
+        y = np.asarray(y).reshape(-1, 1)
         # Normal Equation: theta = (X^T * X)^(-1) * X^T * y
         self.theta = np.linalg.inv(X_poly.T.dot(X_poly)).dot(X_poly.T).dot(y)
 
@@ -126,7 +125,6 @@ class RegressionModelNormalEquation(MachineLearningModel):
         Returns:
         predictions (array-like): Predicted values.
         """
-        #--- Write your code here ---#
         X_poly = _polynomial_features(X, self.degree)
         predictions = X_poly.dot(self.theta)
         return predictions
@@ -143,7 +141,6 @@ class RegressionModelNormalEquation(MachineLearningModel):
         Returns:
         score (float): Evaluation score (MSE).
         """
-        #--- Write your code here ---#
         y = np.asarray(y).reshape(-1, 1)
         predictions = self.predict(X)
         mse = np.mean((predictions - y) ** 2)
@@ -180,7 +177,6 @@ class RegressionModelGradientDescent(MachineLearningModel):
         Returns:
         None
         """
-        #--- Write your code here ---#
         X_poly = _polynomial_features(X, self.degree)
         y = np.asarray(y).reshape(-1, 1)
         n_samples, n_features = X_poly.shape
@@ -355,7 +351,7 @@ class NonLinearLogisticRegression(MachineLearningModel):
         """
         m = X.shape[0]
         h = self._sigmoid(X @ self.theta)
-        epsilon = 1e-15  # to avoid log(0)
+        epsilon = 1e-15
         cost = -(1/m) * (y.T @ np.log(h + epsilon) + (1 - y).T @ np.log(1 - h + epsilon))
         return cost.item()
 
@@ -369,7 +365,6 @@ class NonLinearLogisticRegression(MachineLearningModel):
         if X.shape[1] != 2:
             raise ValueError("Input must have exactly two features.")
 
-        # Map features
         X_mapped = map_feature_interactions(X[:,0], X[:,1], self.degree)
 
         m, n = X_mapped.shape
