@@ -1,1 +1,1 @@
-C:/Users/animi/OneDrive/Рабочий стол/vscodeprojects
+These are my assignments during the Machine learning program I had in Sweden... detailed description to come
