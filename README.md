@@ -18,10 +18,10 @@ This repository gathers practical notebooks and small scripts used during a mach
 - 
 
 
-## What each assignment implements (topic‑level detail)
+## What each assignment implements
 
 ### Assignment 1 — Digit classification & k‑NN experiments
-- Dataset(s): MNIST / digits dataset variants.
+- Dataset: MNIST / digits dataset variants.
 - Implementations:
   - **Brute-force k‑NN** for baseline comparisons.
   - **KDTree-based FastKNN** (custom implementation) to accelerate neighbor search.
@@ -31,22 +31,32 @@ This repository gathers practical notebooks and small scripts used during a mach
   - Visualizations: sample images, misclassified examples, learning curves.
 
 ### Assignment 2 — Dimensionality reduction & visualization
-- Datasets: MNIST Fashion, Letter Recognition (A–Z), Human Activity Recognition (HAR) (561-feature sensor vectors).
+Dataset(s): housing-boston.csv; digits dataset (referenced in notebook).
 - Implementations:
-  - **Principal Component Analysis (PCA)** for variance explanation and projection.
-  - **Multidimensional Scaling (MDS)** for preserving pairwise distances in 2D/3D.
-  - **t‑SNE** for local neighborhood structure and class-cluster visualization.
-  - Combined comparisons: 3×3 scatterplot matrix showing PCA/MDS/t‑SNE across three datasets.
-  - Short analysis on **class separability** and visualization-driven insights.
+ - Linear & polynomial regression implementations and mandatory validation tests (Lecture 2).
+ - Multivariate regression testing / model validation routines (Lecture 2).
+ - Logistic regression: implementations for LogisticRegressionModel and LinearLogisticRegressionModel and related exercises (Lecture 3).
+ - Model selection & regularization: ROCAnalysis workflows and ForwardSelection feature-selection experiments (Lecture 4).
+ - Neural networks: lecture examples and hands-on exercises (Lecture 5).
+ - Data & utilities:
+     - Loading and using housing-boston.csv and digits (notebook cells show dataset reading).
+     - Uses helper modules/classes referenced in the notebook such as DecisionBoundary, ForwardSelection, MachineLearningModel, ROCAnalysis.
+ - Visualizations & checks:
+     - Decision boundary / classifier visualization helpers appear in the notebook import list and are used alongside the exercises.
 
-### Assignment 3 — Regression analysis & diagnostics
-- Dataset: `mtcars` (fuel efficiency modeling)
-- Implementations:
-  - Exploratory plots and variable selection.
-  - **Linear regression** modeling (OLS) and interpretation of coefficients.
-  - Residual diagnostics: heteroscedasticity checks, QQ‑plots, influence/leverage points.
-  - Prediction example for a median car and discussion of model assumptions.
+### Assignment 3 — SVMs, clustering & dimensionality reduction
 
+Datasets: datasets loaded in notebook cells (via pandas / sklearn).
+ - Implementations:
+   - Support Vector Machines (Linear and RBF kernels): data exploration & preprocessing, training, and mandatory tasks to evaluate SVM models (Lecture 6).
+   - Hyperparameter tuning tasks for SVMs (grid-style tuning and parameter-sensitivity exercises).
+   - Comparative experiments: SVM vs Logistic Regression (non-mandatory comparative tasks).
+   - Clustering: mandatory clustering exercises and comparisons (Lecture 8).
+   - Dimensionality reduction: PCA, MDS, and t-SNE comparison tasks (Lecture 9), including DR + clustering comparisons.
+ - Data & utilities:
+   - Common ML stack imports visible in notebook: numpy, pandas, matplotlib, seaborn, scikit-learn.
+ - Visualizations & checks:
+   - Exploratory data analysis and visualization cells precede modeling tasks; notebooks include plotting and comparisons for model selection and DR/clustering results.
 ---
 
 ## How to run
