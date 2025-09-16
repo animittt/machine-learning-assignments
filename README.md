@@ -10,14 +10,6 @@ This repository gathers practical notebooks and small scripts used during a mach
 
 ---
 
-## Contents / Table of contents
-
-- `Assignment-1-2025/` — classification-focused notebooks (k-NN, KDTree, MLP) and MNIST experiments.
-- `Assignment-2-2025/` — dimensionality reduction & visualization (PCA, MDS, t-SNE) across multiple datasets.
-- `Assignment-3-2025/` — regression analysis (mtcars), residual diagnostics, and model comparison.
-- 
-
-
 ## What each assignment implements
 
 ### Assignment 1 — Digit classification & k‑NN experiments
